@@ -22,4 +22,10 @@ class NoteController extends Controller
 
         return NoteRepository::addNote($note, $date);
     }
+
+    public function getNote(Request $request): string
+    {
+        $date = $request->query(('date'));
+        return NoteRepository::getNote($date);
+    }
 }

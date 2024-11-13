@@ -17,4 +17,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/week-notes', [NoteController::class, 'getWeekNotes']);
 Route::post('/add-note', [NoteController::class, 'addNote']);
-Route::get('/get-note', [NoteRepository::class, 'getNote']);
+Route::get('/get-note', [NoteController::class, 'getNote']);

@@ -30,11 +30,16 @@ class NoteRepository
 
     public static function addNote(string $note, string $date): bool
     {
-        return DB::table('notes')->updateOrCreate(
+        return DB::table('notes')->updateOrInsert(
             ['date' => $date],
-            ['note' => $note]
+            [
+                'note' => $note,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
         );
     }
+
 
 
     public static function getNote($date)

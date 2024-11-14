@@ -45,7 +45,7 @@ class NoteController extends Controller
     {
         $date = now()->format('Y-m-d');
         $note = $this->noteRepository->getNote($date);
-        $userEmail = env('MY_EMAIL');
+        $userEmail = env('EMAIL_ADDRESS');
 
         Log::info("Note for today: " . $note);
 

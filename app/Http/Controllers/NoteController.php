@@ -41,6 +41,16 @@ class NoteController extends Controller
         return $this->noteRepository->getNote($date);
     }
 
+    public function deleteNote(Request $request): string
+    {
+        $date = $request->json('date');
+        $result = $this->noteRepository->deleteNote($date);
+        if (!$result) {
+            return response()->json(['message' => "Failed to delete note for $date or no note found"], Response::HTTP_NO_CONTENT);
+        }
+        return response()->json(['message' => "Successfully deleted not for $date"], Response::HTTP_OK);
+    }
+
     public function triggerEmailCheck(Request $request)
     {
         $date = now()->format('Y-m-d');
@@ -57,7 +67,7 @@ class NoteController extends Controller
 
         // Send the email if the note exists
         if ($this->emailService->sendNoteEmail($note, $date, $userEmail)) {
-            return response()->json(['message' => 'Email sent successfully.'], Response::HTTP_OK);
+            return response()->json(['message' => `Email sent successfully to $userEmail`], Response::HTTP_OK);
         }
 
         return response()->json(['message' => 'Failed to send email. Controller'], Response::HTTP_INTERNAL_SERVER_ERROR);

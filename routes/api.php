@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/week-notes', [NoteController::class, 'getWeekNotes']);
 Route::post('/add-note', [NoteController::class, 'addNote']);
 Route::get('/get-note', [NoteController::class, 'getNote']);
+Route::delete('/delete-note', [NoteController::class, 'deleteNote']);
 
 
 Route::post('/send-daily-note-email', [NoteController::class, 'triggerEmailCheck']);

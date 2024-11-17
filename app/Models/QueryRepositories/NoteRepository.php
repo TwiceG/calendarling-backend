@@ -3,6 +3,7 @@
 namespace App\Models\QueryRepositories;
 
 use Illuminate\Support\Facades\DB;
+use App\Models\Note;
 use Illuminate\Support\Facades\Log;
 
 
@@ -28,15 +29,11 @@ class NoteRepository
     }
 
 
-    public static function addNote(string $note, string $date): bool
+    public static function addNote($note,  $date)
     {
-        return DB::table('notes')->updateOrInsert(
+        return Note::updateOrCreate(
             ['date' => $date],
-            [
-                'note' => $note,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
+            ['note' => $note,]
         );
     }
 
@@ -52,6 +49,11 @@ class NoteRepository
         // $note = DB::table('notes')->where('date', $formattedDate)->first(); if need the full data not just the note
 
         return $note ?? '';
+    }
+
+    public static function deleteNote($date)
+    {
+        return Note::where('date', $date)->delete();
     }
 
     public static function getDates($date): array

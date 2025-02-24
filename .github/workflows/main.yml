@@ -1,0 +1,22 @@
+name: Daily Email Trigger
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # This will run the job every day 4am UTC
+  workflow_dispatch:  # Allows manual triggering of the job
+
+jobs:
+  send_daily_email:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code (optional, for logging purposes)
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Send POST request to trigger email route
+      - name: Trigger Daily Email
+        run: |
+          curl -X POST https://calendarling-backend.fly.dev/api/send-daily-note-email \
+            -H "Content-Type: application/json" \
+            -d '{}'

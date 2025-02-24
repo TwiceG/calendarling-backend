@@ -9,6 +9,8 @@ class Note extends Model
 {
     use HasFactory;
 
+    public $timestamps = true;
+
     protected $fillable =
     [
         'date',

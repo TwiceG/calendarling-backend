@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class UserRepository
 {
     // Register a new user
-    public static function register($data)
+    public function register($data)
     {
         return User::create([
             'name' => $data['name'],
@@ -19,13 +19,13 @@ class UserRepository
     }
 
     // Get user by email for login
-    public static function getUserByEmail($email)
+    public function getUserByEmail($email)
     {
         return User::where('email', $email)->first();
     }
 
     // Get user by id (for profile fetching or updating)
-    public static function getUserById($id)
+    public function getUserById($id)
     {
         return User::find($id);
     }

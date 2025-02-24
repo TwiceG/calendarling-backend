@@ -19,12 +19,19 @@ class UserController extends Controller
     // Register a new user
     public function register(Request $request)
     {
-        $data = $request->only(['name', 'email', 'password']);
-        $user = $this->userRepository->create($data);
+        // Check if email is already registered
+        $existingUser = $this->userRepository->getUserByEmail($request->email);
+        if ($existingUser) {
+            return response()->json(['error' => 'Email already taken.'], Response::HTTP_CONFLICT);
+        }
 
+        // Register the user
+        $data = $request->only(['name', 'email', 'password']);
+        $user = $this->userRepository->register($data);
+
+        // Return the response with the newly created user
         return response()->json(['user' => $user], Response::HTTP_CREATED);
     }
-
     // Login an existing user
     public function login(Request $request)
     {

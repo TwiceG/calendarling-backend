@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\UserController;
 
+
 // Routes for NoteController
 Route::get('/week-notes', [NoteController::class, 'getWeekNotes']);
 Route::post('/add-note', [NoteController::class, 'addNote']);
@@ -18,4 +19,4 @@ Route::post('/login', [UserController::class, 'login']);
 
 // Protected routes
 Route::middleware(['auth:sanctum'])->get('/me', [UserController::class, 'me']);
-Route::middleware(['auth:sanctum'])->post('/logout', [UserController::class, 'logout']);
+Route::middleware('auth:sanctum')->post('/logout', [UserController::class, 'logout']);

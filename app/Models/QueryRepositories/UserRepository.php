@@ -5,6 +5,7 @@ namespace App\Models\QueryRepositories;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class UserRepository
 {
@@ -16,6 +17,16 @@ class UserRepository
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    // Login user
+    public function login($credentionals)
+    {
+        if (Auth::attempt($credentionals)) {
+            $user = Auth::user();
+            $user->createToken('token')->plainTextToken;
+            return $user;
+        }
     }
 
     // Get user by email for login

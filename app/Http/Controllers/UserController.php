@@ -37,9 +37,14 @@ class UserController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            return response()->json(['user' => $user], Response::HTTP_OK);
+        $user = $this->userRepository->login($credentials);
+        $token = $user->createToken('token')->plainTextToken;
+
+        if ($user) {
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+            ], Response::HTTP_OK);
         }
 
         return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
@@ -52,9 +57,9 @@ class UserController extends Controller
     }
 
     // Logout the authenticated user
-    public function logout()
+    public function logout(Request $request)
     {
-        Auth::logout();
+        $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out successfully'], Response::HTTP_OK);
     }
 }

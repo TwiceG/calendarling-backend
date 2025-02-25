@@ -9,13 +9,14 @@ use Illuminate\Support\Facades\Log;
 
 class NoteRepository
 {
-    public static function getNotes($date): array
+    public function getNotes($date, $userId): array
     {
         $dates = self::getDates($date);
 
-        // Fetch all notes for the week in a single query
+        // Fetch all notes for the week for the user
         $notes = DB::table('notes')
             ->whereIn('date', $dates)
+            ->where('user_id', $userId)
             ->pluck('note', 'date')
             ->toArray();
 
@@ -29,34 +30,39 @@ class NoteRepository
     }
 
 
-    public static function addNote($note,  $date)
+    public function addNote($note, $date, $userId)
     {
         return Note::updateOrCreate(
-            ['date' => $date],
-            ['note' => $note,]
+            ['date' => $date, 'user_id' => $userId],
+            ['note' => $note]
         );
     }
 
 
 
-    public static function getNote($date)
+    public function getNote($date, $userId)
     {
         $dateObject = \DateTime::createFromFormat('Y-m-d', $date);
         $formattedDate = $dateObject ? $dateObject->format('Y-m-d') : $date;
 
-        $note = DB::table('notes')->where('date', $formattedDate)->value('note');
+        $note = DB::table('notes')
+            ->where('date', $formattedDate)
+            ->where('user_id', $userId)
+            ->value('note');
 
         // $note = DB::table('notes')->where('date', $formattedDate)->first(); if need the full data not just the note
 
         return $note ?? '';
     }
 
-    public static function deleteNote($date)
+    public function deleteNote($date, $userId)
     {
-        return Note::where('date', $date)->delete();
+        return Note::where('date', $date)
+            ->where('user_id', $userId)
+            ->delete();
     }
 
-    public static function getDates($date): array
+    public function getDates($date): array
     {
         // Convert the input date string to a DateTime object
         $dateObject = \DateTime::createFromFormat('Y-m-d', $date);

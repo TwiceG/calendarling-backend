@@ -14,6 +14,7 @@ class Note extends Model
     protected $fillable =
     [
         'date',
-        'note'
+        'note',
+        'user_id'
     ];
 }

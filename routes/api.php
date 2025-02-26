@@ -13,6 +13,7 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
 // Protected routes
+// User
 Route::middleware(['auth:sanctum'])->get('/me', [UserController::class, 'me']);
 Route::middleware('auth:sanctum')->post('/logout', [UserController::class, 'logout']);
 

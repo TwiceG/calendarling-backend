@@ -43,8 +43,9 @@ class UserController extends Controller
         if ($user) {
             return response()->json([
                 'user' => $user,
-                'token' => $token,
-            ], Response::HTTP_OK);
+                'message' => 'Logged in'
+            ], Response::HTTP_OK)
+                ->cookie('token', $token, 60, '/', '', true, true);  // Secure, HttpOnly
         }
 
         return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
@@ -60,6 +61,8 @@ class UserController extends Controller
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logged out successfully'], Response::HTTP_OK);
+
+        return response()->json(['message' => 'Logged out successfully'], Response::HTTP_OK)
+            ->cookie('token', '', -1, '/', '', true, true); // Expire the cookie
     }
 }

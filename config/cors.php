@@ -16,19 +16,15 @@ return [
     */
 
     'paths' => ['*'],
-
     'allowed_methods' => ['*'],
-
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000', 'http://localhost:5173')],
-
+    'allowed_origins' => [
+        'http://localhost:3000', // First frontend URL
+        'http://localhost:5173', // Second frontend URL (if using Vite)
+    ],
     'allowed_origins_patterns' => [],
-
     'allowed_headers' => ['*'],
-
     'exposed_headers' => [],
-
     'max_age' => 0,
-
     'supports_credentials' => true,
 
 ];

@@ -6,6 +6,7 @@ use App\Models\QueryRepositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -38,17 +39,18 @@ class UserController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         $user = $this->userRepository->login($credentials);
-        $token = $user->createToken('token')->plainTextToken;
 
-        if ($user) {
-            return response()->json([
-                'user' => $user,
-                'message' => 'Logged in'
-            ], Response::HTTP_OK)
-                ->cookie('token', $token, 60, '/', '', true, true);  // Secure, HttpOnly
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
-        return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        $token = $user->createToken('token')->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+            'message' => 'You are now Logged in'
+        ], Response::HTTP_OK);
     }
 
     // Fetch the authenticated user

@@ -19,7 +19,8 @@ return [
     'allowed_methods' => ['*'],
     'allowed_origins' => [
         'http://localhost:3000', // First frontend URL
-        'http://localhost:5173', // Second frontend URL (if using Vite)
+        'http://localhost:5173',
+        'https://calendarling-dia.vercel.app' // Second frontend URL (if using Vite)
     ],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],

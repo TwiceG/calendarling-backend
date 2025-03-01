@@ -24,7 +24,6 @@ class UserRepository
     {
         if (Auth::attempt($credentionals)) {
             $user = Auth::user();
-            $user->createToken('token')->plainTextToken;
             return $user;
         }
     }
@@ -39,5 +38,10 @@ class UserRepository
     public function getUserById($id)
     {
         return User::find($id);
+    }
+
+    public function getEmailById($userId)
+    {
+        return User::where('id', $userId)->pluck('email')->first();
     }
 }

@@ -67,4 +67,9 @@ class UserController extends Controller
         return response()->json(['message' => 'Logged out successfully'], Response::HTTP_OK)
             ->cookie('token', '', -1, '/', '', true, true); // Expire the cookie
     }
+
+    public function getUserEmail($userId)
+    {
+        return $this->userRepository->getEmailById($userId);
+    }
 }

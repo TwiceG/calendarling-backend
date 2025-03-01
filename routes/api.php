@@ -6,7 +6,8 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\UserController;
 
 
-Route::post('/send-daily-note-email', [NoteController::class, 'triggerEmailCheck']);
+Route::middleware(['auth:sanctum'])->post('/send-daily-note-email', [NoteController::class, 'triggerEmailCheck']);
+
 
 // Routes for UserController (authentication related)
 Route::post('/register', [UserController::class, 'register']);

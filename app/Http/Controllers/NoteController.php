@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
 use App\Models\QueryRepositories\NoteRepository;
 use App\Services\EmailService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\UserController;
 
 class NoteController extends Controller
 {
     protected $noteRepository;
     protected $emailService;
+    protected $userController;
     private $userId;
 
-    public function __construct(NoteRepository $noteRepository, EmailService $emailService)
+    public function __construct(NoteRepository $noteRepository, EmailService $emailService, UserController $userController)
     {
+        $this->userController = $userController;
         $this->noteRepository = $noteRepository;
         $this->emailService = $emailService;
         // Set the user ID when the user is logged in
@@ -46,6 +51,11 @@ class NoteController extends Controller
         return $this->noteRepository->getNote($date, $this->userId);
     }
 
+    private function  getNotes(): Collection
+    {
+        return $this->noteRepository->getTodayNotes();
+    }
+
     public function deleteNote(Request $request): string
     {
         $date = $request->json('date');
@@ -57,25 +67,37 @@ class NoteController extends Controller
     }
 
 
-    public function triggerEmailCheck(Request $request)
+    public function triggerEmailCheck()
     {
         $date = now()->format('Y-m-d');
-        $note = $this->noteRepository->getNote($date, $this->userId);
+        $notes = $this->getNotes();
         $userEmail = env('EMAIL_ADDRESS');
 
-        Log::info("Note for today: " . $note);
+        Log::info("Notes for today: " . $notes);
 
-
-        // Check if note exists (not empty) before attempting to send an email
-        if (empty($note)) {
-            return response()->json(['message' => 'No note available for today. Email not sent.'], Response::HTTP_OK);
+        $sentEmails = [];
+        $failedEmails = [];
+        foreach ($notes as $note) {
+            $userId = $note->user_id;
+            $userEmail = $this->userController->getUserEmail($userId);
+            if ($this->emailService->sendNoteEmail($note->note, $date, $userEmail)) {
+                $sentEmails = $userEmail;
+            } else {
+                $failedEmails = $userEmail;
+            }
         }
 
-        // Send the email if the note exists
-        if ($this->emailService->sendNoteEmail($note, $date, $userEmail)) {
-            return response()->json(['message' => `Email sent successfully to $userEmail`], Response::HTTP_OK);
+        if (!$failedEmails) {
+            return response()->json([
+                'message' => "All emails sent successfully",
+                'sent_emails' => $sentEmails
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'message' => "Some emails failed to send",
+                'sent_emails' => $sentEmails,
+                'failed_emails' => $failedEmails
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        return response()->json(['message' => 'Failed to send email. Controller'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

@@ -38,6 +38,15 @@ class NoteRepository
         );
     }
 
+    public function getTodayNotes()
+    {
+        $date = now()->format('Y-m-d');
+
+        return DB::table('notes')
+            ->where('date', $date)
+            ->get();
+    }
+
 
 
     public function getNote($date, $userId)

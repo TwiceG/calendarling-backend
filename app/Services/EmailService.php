@@ -20,7 +20,7 @@ class EmailService
         $this->apiKey = env('EMAILJS_API_KEY');
     }
 
-    public function sendNoteEmail(string $note, string $date, string $userEmail): bool
+    public function sendNoteEmail(string $note, string $date, string $userEmail, string $userName): bool
     {
         if (!$this->apiKey) {
             Log::error('Email API Key is missing in the environment variables.');
@@ -36,6 +36,7 @@ class EmailService
                 'to_email' => $userEmail,
                 'note' => $note,
                 'date' => $date,
+                'name' => $userName
             ],
             'accessToken' => $this->apiKey,
         ];

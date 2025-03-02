@@ -71,16 +71,16 @@ class NoteController extends Controller
     {
         $date = now()->format('Y-m-d');
         $notes = $this->getNotes();
-        $userEmail = env('EMAIL_ADDRESS');
-
         Log::info("Notes for today: " . $notes);
 
         $sentEmails = [];
         $failedEmails = [];
         foreach ($notes as $note) {
             $userId = $note->user_id;
+            $user = $this->userController->getUser($userId);
+            $userName = $user->name;
             $userEmail = $this->userController->getUserEmail($userId);
-            if ($this->emailService->sendNoteEmail($note->note, $date, $userEmail)) {
+            if ($this->emailService->sendNoteEmail($note->note, $date, $userEmail, $userName)) {
                 $sentEmails = $userEmail;
             } else {
                 $failedEmails = $userEmail;

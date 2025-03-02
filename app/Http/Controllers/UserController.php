@@ -72,4 +72,9 @@ class UserController extends Controller
     {
         return $this->userRepository->getEmailById($userId);
     }
+
+    public function getUser($userId)
+    {
+        return $this->userRepository->getUserById($userId);
+    }
 }

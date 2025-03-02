@@ -23,7 +23,7 @@ class UserController extends Controller
         // Check if email is already registered
         $existingUser = $this->userRepository->getUserByEmail($request->email);
         if ($existingUser) {
-            return response()->json(['error' => 'Email already taken.'], Response::HTTP_CONFLICT);
+            return response()->json(['message' => 'Email already taken.'], Response::HTTP_CONFLICT);
         }
 
         // Register the user

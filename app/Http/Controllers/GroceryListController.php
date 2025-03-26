@@ -32,9 +32,14 @@ class GroceryListController extends Controller
     public function addGroceryList(Request $request)
     {
         $title = $request->json('title');
-        $listId = $request->json('list_id');
-        $result = $this->groceryListRepository->addOrUpdateGroceryList($title, $this->userId, $listId);
-        return response()->json(['message' => "Successfully added/updated grocery list: $title", 'list' => $result]);
+
+        // Create a new grocery list for the user
+        $groceryList = $this->groceryListRepository->addOrUpdateGroceryList($title, $this->userId);
+
+        return response()->json([
+            'message' => "Successfully created grocery list: {$groceryList->title}",
+            'list' => $groceryList // Return the full list with its ID
+        ]);
     }
 
     // Delete a grocery list

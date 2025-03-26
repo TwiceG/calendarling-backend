@@ -26,16 +26,22 @@ class GroceryListRepository
      * @param string $title
      * @param int $userId
      * @param int|null $id
-     * @return GroceryList|null
+     * @return GroceryList
      */
     public function addOrUpdateGroceryList($title, $userId, $listId = null)
     {
+        // If no list ID is provided, create a new list
         if (!$listId) {
-            return null;
+            return GroceryList::create([
+                'title' => $title,
+                'user_id' => $userId
+            ]);
         }
+
+        // Update the existing list
         return GroceryList::updateOrCreate(
-            ['user_id' => $userId, 'id' => $listId], // to find the list
-            ['title' => $title, 'user_id' => $userId] // Update or create
+            ['id' => $listId, 'user_id' => $userId],
+            ['title' => $title]
         );
     }
 

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('grocery_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('grocery_list_id')->constrained()->onDelete('cascade'); // Links to grocery_lists table
-            $table->string('title');
-            $table->boolean('checked')->default(false);
+            $table->string('item_name');
+            $table->boolean('is_checked')->default(false);
             $table->integer('position');
             $table->timestamps();
         });

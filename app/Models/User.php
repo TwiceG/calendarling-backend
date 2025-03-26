@@ -46,4 +46,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Define the relationship: A user has many grocery lists
+    public function groceryLists()
+    {
+        return $this->hasMany(GroceryList::class);
+    }
+
+    // Define the relationship: A user has many notes
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
 }

@@ -11,10 +11,15 @@ class Note extends Model
 
     public $timestamps = true;
 
-    protected $fillable =
-    [
+    protected $fillable = [
         'date',
         'note',
         'user_id'
     ];
+
+    // A Note belongs to a User
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

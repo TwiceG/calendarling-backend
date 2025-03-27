@@ -33,12 +33,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add-grocery-list', [GroceryListController::class, 'addGroceryList']);
     Route::get('/grocery-lists', [GroceryListController::class, 'getGroceryLists']);
     Route::get('/grocery-list', [GroceryListController::class, 'getGroceryListById']);
-    Route::delete('/delete-list', [GroceryListController::class, 'deleteGroceryList']);
+    Route::delete('/delete-list/{listId}', [GroceryListController::class, 'deleteGroceryList']);
 });
 
 // Routes for GroceryItemController
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/save-items', [GroceryItemController::class, 'saveItems']);
     Route::get('/grocery-items', [GroceryItemController::class, 'getItemsForGroceryList']);
-    Route::delete('/grocery-item', [GroceryItemController::class, 'deleteItem']);
+    Route::delete('/delete-item/{itemId}', [GroceryItemController::class, 'deleteItem']);
 });

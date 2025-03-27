@@ -40,5 +40,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/save-items', [GroceryItemController::class, 'saveItems']);
     Route::get('/grocery-items', [GroceryItemController::class, 'getItemsForGroceryList']);
-    Route::delete('/grocery-item/{id}', [GroceryItemController::class, 'deleteGroceryItem']);
+    Route::delete('/grocery-item', [GroceryItemController::class, 'deleteItem']);
 });

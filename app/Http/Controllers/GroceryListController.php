@@ -43,9 +43,8 @@ class GroceryListController extends Controller
     }
 
     // Delete a grocery list
-    public function deleteGroceryList(Request $request)
+    public function deleteGroceryList($listId)
     {
-        $listId = $request->json('list_id');
         $result = $this->groceryListRepository->deleteGroceryList($listId, $this->userId);
 
         if ($result) {

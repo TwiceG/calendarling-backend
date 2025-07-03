@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroceryItemController;
 use App\Http\Controllers\GroceryListController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
 
 
 Route::middleware(['auth:sanctum'])->post('/send-daily-note-email', [NoteController::class, 'triggerEmailCheck']);
@@ -16,6 +17,7 @@ Route::middleware(['auth:sanctum'])->post('/send-daily-note-email', [NoteControl
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/password-reset', [PasswordResetLinkController::class, 'store']);
+Route::post('/change-password', [NewPasswordController::class, 'store']);
 
 // Protected routes
 // User

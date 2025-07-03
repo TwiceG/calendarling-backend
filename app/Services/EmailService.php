@@ -23,7 +23,7 @@ class EmailService
     }
 
 
-    public function sendPasswordResetLink(string $message, string $date, string $userEmail, string $userName): bool
+    public function sendPasswordResetLink(string $fullMessage, string $date, string $userEmail, string $userName): bool
     {
         if (!$this->apiKey) {
             Log::error('Email API Key is missing in the environment variables.');
@@ -37,7 +37,7 @@ class EmailService
             'user_id' => $this->userId,
             'template_params' => [
                 'to_email' => $userEmail,
-                'note' => $message,
+                'message' => $fullMessage,
                 'date' => $date,
                 'name' => $userName
             ],

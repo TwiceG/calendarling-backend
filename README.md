@@ -4,11 +4,18 @@
   </a>
 </p>
 
-## About 📅
+## About
 
 This app contains a calendar where you can add notes, and it will remind you via email if you have a note on that day.  
 All you need to do is **register** to use the calendar functions and access the **Chill Zone**, where you can also find a  
 [**Game**](https://alpha-beatz.vercel.app/) app that I developed. 🎮
+It is still getting new features, the latest is the Shop and Cook tab where u can make shopping list , rearrange them and more.
+
+For testing my site you can use the test user:
+- email: test@test.com
+- password: test
+
+> ⚠️ **NOTE:** The first aciton on the website can be slow, because I use only free charge service that makes the backend go to "sleep" mode when its not used, thank you for your understanding and patience.
 
 > ⚠️ **NOTE:** This app is fully deployed, so if you want to set it up yourself, you'll need the [**frontend**](#frontend) part as well, and you'll need to set up a [**database**](#database) and **email service**.
 

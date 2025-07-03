@@ -25,6 +25,6 @@ class EmailJSChannel
 
         $fullMessage = $note . "\n" . $link;
 
-        $emailService->sendNoteEmail($fullMessage, $date, $userEmail, $userName);
+        $emailService->sendPasswordResetLink($fullMessage, $date, $userEmail, $userName);
     }
 }

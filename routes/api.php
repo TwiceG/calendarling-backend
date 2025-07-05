@@ -8,9 +8,17 @@ use App\Http\Controllers\GroceryItemController;
 use App\Http\Controllers\GroceryListController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Events\TestMessageSent;
 
 
 Route::middleware(['auth:sanctum'])->post('/send-daily-note-email', [NoteController::class, 'triggerEmailCheck']);
+
+
+Route::get('/test-broadcast', function () {
+    broadcast(new TestMessageSent('Hello Reverb! Finally works?'));
+    return 'Broadcast sent';
+});
+
 
 
 // Routes for UserController (authentication related)

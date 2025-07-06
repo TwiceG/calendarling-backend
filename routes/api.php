@@ -11,31 +11,13 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Events\TestMessageSent;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\ChatController;
+use Illuminate\Support\Facades\Broadcast;
 
 
 Route::middleware(['auth:sanctum'])->post('/send-daily-note-email', [NoteController::class, 'triggerEmailCheck']);
 
 
-Route::get('/test-broadcast', function () {
-    try {
-        Log::info('Broadcasting test message');
 
-        $message = 'Hello Reverb! Test at ' . now()->format('H:i:s');
-        broadcast(new TestMessageSent($message));
-
-        return response()->json([
-            'status' => 'Message broadcasted!',
-            'message' => $message,
-            'timestamp' => now()->toISOString()
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Broadcast error: ' . $e->getMessage());
-        return response()->json([
-            'status' => 'Error',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-});
 
 
 
@@ -51,9 +33,26 @@ Route::middleware(['auth:sanctum'])->get('/me', [UserController::class, 'me']);
 Route::middleware('auth:sanctum')->post('/logout', [UserController::class, 'logout']);
 
 //Customer service chat
-
 Route::middleware('auth:sanctum')->post('/send-message', [ChatController::class, 'sendMessage']);
 
+Route::middleware(['auth:sanctum'])->post('/broadcasting/auth', function (Request $request) {
+    Log::info('Custom broadcasting auth', [
+        'user' => $request->user(),
+        'has_auth_header' => $request->hasHeader('Authorization'),
+        'bearer_token' => $request->bearerToken() ? 'present' : 'missing',
+        'channel_name' => $request->input('channel_name'),
+        'socket_id' => $request->input('socket_id'),
+    ]);
+
+    try {
+        $response = Broadcast::auth($request);
+        Log::info('Broadcasting auth success', ['response' => $response]);
+        return $response;
+    } catch (\Exception $e) {
+        Log::error('Broadcasting auth failed', ['error' => $e->getMessage()]);
+        throw $e;
+    }
+});
 
 // Routes for NoteController
 Route::middleware('auth:sanctum')->group(function () {

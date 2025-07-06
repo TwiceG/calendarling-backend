@@ -22,25 +22,29 @@ class PrivateMessageSent implements ShouldBroadcast
         $this->message = $message;
     }
 
-    // Broadcast on the receiver's private channel
+    // Create a shared channel for both users
     public function broadcastOn()
     {
-        return new PrivateChannel('chat.' . $this->receiverId);
+        // Create a consistent channel name for both users
+        $userIds = [$this->sender->id, $this->receiverId];
+        sort($userIds); // Ensure consistent ordering
+        $channelName = 'chat.' . implode('-', $userIds);
+
+        return new PrivateChannel($channelName);
     }
 
-    // Event name to listen for on frontend
     public function broadcastAs()
     {
         return 'PrivateMessageSent';
     }
 
-    // Data sent to frontend
     public function broadcastWith()
     {
         return [
             'sender_id' => $this->sender->id,
             'sender_name' => $this->sender->name,
             'message' => $this->message,
+            'receiver_id' => $this->receiverId,
         ];
     }
 }

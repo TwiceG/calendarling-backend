@@ -23,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
         ]);
 
+        $middleware->alias([
+            'log.broadcast' => \App\Http\Middleware\LogBroadcastAuth::class,
+        ]);
+
         // Trust all proxies (optional but needed in some configurations)
         $middleware->trustProxies(at: '*');
     })

@@ -13,10 +13,8 @@ class BroadcastServiceProvider extends ServiceProvider
     {
         // Register the routes needed for broadcasting auth (this creates the /broadcasting/auth route)
         Broadcast::routes(['middleware' => ['auth:sanctum']]);
-        Log::info('Broadcast auth user: ', ['user' => Auth::user()]);
-
         // Define your broadcast channel authorizations here
-        Broadcast::channel('chat.{userId}', function ($user, $userId) {
+        Broadcast::channel('chat.{id}', function ($user, $userId) {
             return (int) $user->id === (int) $userId;
         });
     }

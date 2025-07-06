@@ -3,33 +3,38 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Events\PrivateMessageSent;
+use App\Models\QueryRepositories\MessageRepository;
 
 class ChatController extends Controller
 {
+    protected $messageRepo;
+
+    public function __construct(MessageRepository $messageRepo)
+    {
+        $this->messageRepo = $messageRepo;
+    }
+
     public function sendMessage(Request $request)
     {
         $request->validate([
             'message' => 'required|string|max:1000',
-            'receiver_id' => 'required|integer|exists:users,id', // Add validation for receiver
+            'receiver_id' => 'required|integer|exists:users,id',
         ]);
 
         $sender = $request->user();
-        $message = $request->input('message');
+        $messageText = $request->input('message');
         $helpdeskMemberId = 11;
 
-        // Determine the receiver based on who is sending
-        if ($sender->id == $helpdeskMemberId) {
-            // If helpdesk agent is sending, send to the selected user
-            $receiverId = $request->input('receiver_id');
-        } else {
-            // If regular user is sending, send to helpdesk
-            $receiverId = $helpdeskMemberId;
-        }
+        $receiverId = $sender->id === $helpdeskMemberId
+            ? $request->input('receiver_id')
+            : $helpdeskMemberId;
 
-        // Broadcast to the receiver's private channel
-        broadcast(new PrivateMessageSent($sender, $receiverId, $message))->toOthers();
+        // ✅ Save the message
+        $message = $this->messageRepo->storeMessage($sender->id, $receiverId, $messageText);
 
-        return response()->json(['status' => 'Message sent']);
+        // ✅ Broadcast it
+        broadcast(new PrivateMessageSent($message))->toOthers();
+
+        return response()->json(['status' => 'Message sent', 'message' => $message]);
     }
 }

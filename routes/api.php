@@ -9,6 +9,7 @@ use App\Http\Controllers\GroceryListController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Events\TestMessageSent;
+use Illuminate\Support\Facades\Log;
 
 
 Route::middleware(['auth:sanctum'])->post('/send-daily-note-email', [NoteController::class, 'triggerEmailCheck']);
@@ -16,25 +17,25 @@ Route::middleware(['auth:sanctum'])->post('/send-daily-note-email', [NoteControl
 
 Route::get('/test-broadcast', function () {
     try {
-        // Check if we can reach the Reverb server
-        $broadcaster = app('broadcast.manager')->connection('reverb');
+        Log::info('Broadcasting test message');
 
-        broadcast(new TestMessageSent('Hello Reverb! Finally works?'));
+        $message = 'Hello Reverb! Test at ' . now()->format('H:i:s');
+        broadcast(new TestMessageSent($message));
 
         return response()->json([
             'status' => 'Message broadcasted!',
-            'config' => [
-                'host' => config('broadcasting.connections.reverb.options.host'),
-                'port' => config('broadcasting.connections.reverb.options.port'),
-                'scheme' => config('broadcasting.connections.reverb.options.scheme'),
-            ]
+            'message' => $message,
+            'timestamp' => now()->toISOString()
         ]);
     } catch (\Exception $e) {
+        Log::error('Broadcast error: ' . $e->getMessage());
         return response()->json([
-            'error' => 'Broadcast failed: ' . $e->getMessage()
+            'status' => 'Error',
+            'error' => $e->getMessage()
         ], 500);
     }
 });
+
 
 
 // Routes for UserController (authentication related)

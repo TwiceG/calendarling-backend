@@ -20,25 +20,32 @@ class ChatController extends Controller
     {
         $request->validate([
             'message' => 'required|string|max:1000',
-            'receiver_id' => 'required|integer|exists:users,id',
+            'receiver_id' => 'required|integer|exists:users,id', // Add validation for receiver
         ]);
 
         $sender = $request->user();
         $messageText = $request->input('message');
+        $helpdeskMemberId = 11;
 
+        // Determine the receiver based on who is sending
+        if ($sender->id == $helpdeskMemberId) {
+            // If helpdesk agent is sending, send to the selected user
+            $receiverId = $request->input('receiver_id');
+        } else {
+            // If regular user is sending, send to helpdesk
+            $receiverId = $helpdeskMemberId;
+        }
+        // // ✅ Save the message
+        // $message = $this->messageRepo->storeMessage($sender->id, $receiverId, $messageText);
 
-        $receiverId = $sender->id === $this->helpdeskMemberId
-            ? $request->input('receiver_id')
-            : $this->helpdeskMemberId;
+        // Broadcast to the receiver's private channel
+        broadcast(new PrivateMessageSent($sender, $receiverId, $messageText))->toOthers();
 
-        // ✅ Save the message
-        $message = $this->messageRepo->storeMessage($sender->id, $receiverId, $messageText);
-
-        // ✅ Broadcast it
-        broadcast(new PrivateMessageSent($message))->toOthers();
-
-        return response()->json(['status' => 'Message sent', 'message' => $message]);
+        return response()->json(['status' => 'Message sent']);
     }
+
+
+
     public function getMessagesByChannel(Request $request)
     {
         $userId = $request->user()->id;

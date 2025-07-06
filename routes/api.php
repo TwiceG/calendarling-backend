@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Events\TestMessageSent;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\ChatController;
 
 
 Route::middleware(['auth:sanctum'])->post('/send-daily-note-email', [NoteController::class, 'triggerEmailCheck']);
@@ -48,6 +49,11 @@ Route::post('/change-password', [NewPasswordController::class, 'store']);
 // User
 Route::middleware(['auth:sanctum'])->get('/me', [UserController::class, 'me']);
 Route::middleware('auth:sanctum')->post('/logout', [UserController::class, 'logout']);
+
+//Customer service chat
+
+Route::middleware('auth:sanctum')->post('/send-message', [ChatController::class, 'sendMessage']);
+
 
 // Routes for NoteController
 Route::middleware('auth:sanctum')->group(function () {

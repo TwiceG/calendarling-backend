@@ -15,10 +15,26 @@ Route::middleware(['auth:sanctum'])->post('/send-daily-note-email', [NoteControl
 
 
 Route::get('/test-broadcast', function () {
-    broadcast(new TestMessageSent('Hello Reverb! Finally works?'));
-    return 'Broadcast sent';
-});
+    try {
+        // Check if we can reach the Reverb server
+        $broadcaster = app('broadcast.manager')->connection('reverb');
 
+        broadcast(new TestMessageSent('Hello Reverb! Finally works?'));
+
+        return response()->json([
+            'status' => 'Message broadcasted!',
+            'config' => [
+                'host' => config('broadcasting.connections.reverb.options.host'),
+                'port' => config('broadcasting.connections.reverb.options.port'),
+                'scheme' => config('broadcasting.connections.reverb.options.scheme'),
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Broadcast failed: ' . $e->getMessage()
+        ], 500);
+    }
+});
 
 
 // Routes for UserController (authentication related)

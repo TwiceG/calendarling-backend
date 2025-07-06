@@ -34,6 +34,8 @@ Route::middleware('auth:sanctum')->post('/logout', [UserController::class, 'logo
 
 //Customer service chat
 Route::middleware('auth:sanctum')->post('/send-message', [ChatController::class, 'sendMessage']);
+Route::middleware('auth:sanctum')->get('/messages/{userId}', [ChatController::class, 'getMessagesByChannel']);
+
 
 Route::middleware(['auth:sanctum'])->post('/broadcasting/auth', function (Request $request) {
     Log::info('Custom broadcasting auth', [

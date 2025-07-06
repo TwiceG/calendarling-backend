@@ -8,10 +8,12 @@ use App\Models\QueryRepositories\MessageRepository;
 class ChatController extends Controller
 {
     protected $messageRepo;
+    protected $helpdeskMemberId;
 
     public function __construct(MessageRepository $messageRepo)
     {
         $this->messageRepo = $messageRepo;
+        $this->helpdeskMemberId = 11;
     }
 
     public function sendMessage(Request $request)
@@ -23,11 +25,11 @@ class ChatController extends Controller
 
         $sender = $request->user();
         $messageText = $request->input('message');
-        $helpdeskMemberId = 11;
 
-        $receiverId = $sender->id === $helpdeskMemberId
+
+        $receiverId = $sender->id === $this->helpdeskMemberId
             ? $request->input('receiver_id')
-            : $helpdeskMemberId;
+            : $this->helpdeskMemberId;
 
         // ✅ Save the message
         $message = $this->messageRepo->storeMessage($sender->id, $receiverId, $messageText);
@@ -36,5 +38,16 @@ class ChatController extends Controller
         broadcast(new PrivateMessageSent($message))->toOthers();
 
         return response()->json(['status' => 'Message sent', 'message' => $message]);
+    }
+    public function getMessagesByChannel(Request $request)
+    {
+        $userId = $request->user()->id;
+
+
+        $channelName = $this->messageRepo->getChannelName($userId, $this->helpdeskMemberId);
+
+        $messages = $this->messageRepo->getMessagesByChannel($channelName);
+
+        return response()->json(['status' => 'Messages loaded', 'messages' => $messages]);
     }
 }

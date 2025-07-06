@@ -16,7 +16,7 @@ class BroadcastServiceProvider extends ServiceProvider
         Log::info('Broadcast auth user: ', ['user' => Auth::user()]);
 
         // Define your broadcast channel authorizations here
-        Broadcast::channel('private-channel.{userId}', function ($user, $userId) {
+        Broadcast::channel('chat.{userId}', function ($user, $userId) {
             return (int) $user->id === (int) $userId;
         });
     }

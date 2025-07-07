@@ -1,23 +1,39 @@
-name: Daily Email Trigger
 
+name: Daily Email Trigger
 on:
   schedule:
-    - cron: '0 4 * * *'  # This will run the job every day at 4 AM UTC
-  workflow_dispatch:  # Allows manual triggering of the job
+    - cron: '0 4 * * *' # Every day at 4 AM UTC
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
   send_daily_email:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 10
     steps:
-      # Checkout the code (optional)
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      # Trigger Daily Email with Bearer token from GitHub Secrets
-      - name: Trigger Daily Email
+      - name: Wake up app and trigger email
         run: |
+          echo "Waking up the app..."
+          
+          # First, wake up the app with health check
+          if curl -X GET https://calendarling-backend.fly.dev/api/health \
+            --max-time 90 \
+            --retry 3 \
+            --retry-delay 15 \
+            --fail-with-body; then
+            echo "✓ App is awake, triggering email immediately..."
+          else
+            echo "⚠ Health check failed, but attempting email trigger anyway..."
+          fi
+          
+          # Immediately trigger the email while app is awake
           curl -X POST https://calendarling-backend.fly.dev/api/send-daily-note-email \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.DAILY_EMAIL_TOKEN }}" \
-            -d '{}'
+            -d '{}' \
+            --max-time 60 \
+            --retry 2 \
+            --retry-delay 10 \
+            --fail-with-body

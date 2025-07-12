@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Events\PrivateMessageSent;
 use App\Models\QueryRepositories\MessageRepository;
 
 class ChatController extends Controller
@@ -15,7 +16,6 @@ class ChatController extends Controller
         $this->messageRepo = $messageRepo;
         $this->helpdeskMemberId = 11;
     }
-
     public function sendMessage(Request $request)
     {
         $request->validate([
@@ -24,7 +24,7 @@ class ChatController extends Controller
         ]);
 
         $sender = $request->user();
-        $messageText = $request->input('message');
+        $message = $request->input('message');
         $helpdeskMemberId = 11;
 
         // Determine the receiver based on who is sending
@@ -35,16 +35,15 @@ class ChatController extends Controller
             // If regular user is sending, send to helpdesk
             $receiverId = $helpdeskMemberId;
         }
+
         // // ✅ Save the message
         // $message = $this->messageRepo->storeMessage($sender->id, $receiverId, $messageText);
 
         // Broadcast to the receiver's private channel
-        broadcast(new PrivateMessageSent($sender, $receiverId, $messageText))->toOthers();
+        broadcast(new PrivateMessageSent($sender, $receiverId, $message))->toOthers();
 
         return response()->json(['status' => 'Message sent']);
     }
-
-
 
     public function getMessagesByChannel(Request $request)
     {
